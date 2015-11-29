@@ -19,6 +19,7 @@ jhengine_preprocess.hpp
 //boost
 #include <memory>
 #include <string>
+#include <algorithm>
 
 #include "JHEngine\error\jhengine_errorcode.h"
 

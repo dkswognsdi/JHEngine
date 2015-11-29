@@ -1,4 +1,6 @@
 #pragma once
+#include "afxwin.h"
+#include "afxcmn.h"
 
 
 // CProcessDialog 대화 상자입니다.
@@ -22,4 +24,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedOk();
+	afx_msg void OnLbnSelchangeList1();
+	virtual BOOL OnInitDialog();
+	CListCtrl process_list_listctrl;
+	CImageList image_list_;
 };

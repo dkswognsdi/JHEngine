@@ -15,6 +15,7 @@ process_list.hpp
 
 #include "JHEngine\\preprocess\jhengine_preprocess.hpp"
 #include <TlHelp32.h>
+#include <strsafe.h>
 
 template <typename _T>
 struct ProcessListStructureDeleter
@@ -106,6 +107,43 @@ public:
 		}
 		process_list_num_ = process_list_count;
 		return ERROR_SUCCESS;
+	}
+
+	BOOL __stdcall ProcessListPrint(CImageList &imglist, CListCtrl &listbox_handle, CProcessList *process_list)
+	{
+		if (!SUCCEEDED(process_list->GetProcessList()))
+			return FALSE;
+
+		listbox_handle.DeleteAllItems();
+
+		ProcessListStructure *process_list_structure = process_list->GetStructure();
+		int process_num = process_list->GetSize();
+		
+		LV_COLUMN col;
+
+		col.mask = LVCF_FMT | LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH;
+		col.fmt = LVCFMT_LEFT;
+
+		col.pszText = L"";
+		col.iSubItem = 0;
+		col.cx = 1000;
+		listbox_handle.InsertColumn(0, &col);
+
+		for (int i = 0; i < process_num; i++)
+		{
+			wchar_t process_list_name[MAX_PATH];
+			StringCbPrintfW(process_list_name
+				, sizeof(process_list_name)
+				, L"%08X-%ls"
+				, process_list_structure[i].pid
+				, process_list_structure[i].process_name.c_str());
+
+			imglist.Add(process_list_structure[i].icon);
+			listbox_handle.InsertItem(i, process_list_name);
+		}
+		listbox_handle.SetImageList(&imglist, LVSIL_SMALL);
+
+		return TRUE;
 	}
 
 	ProcessListStructure *GetStructure() const

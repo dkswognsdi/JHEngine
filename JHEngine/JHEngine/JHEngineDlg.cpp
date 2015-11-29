@@ -159,11 +159,6 @@ HCURSOR CJHEngineDlg::OnQueryDragIcon()
 
 void CJHEngineDlg::OnBnClickedOk()
 {
-	CProcessList process_list;
-
-	for (int i = 0; i < 100; i++)
-		process_list.GetProcessList();
-
 	CProcessDialog process_dialog(object_manager_.get());
 	if (process_dialog.DoModal() == IDOK)
 	{
