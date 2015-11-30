@@ -90,5 +90,8 @@
     <Image Include="res\JHEngine.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="..\imageres_15.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

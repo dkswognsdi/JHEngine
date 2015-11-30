@@ -16,6 +16,9 @@ process_list.hpp
 #include "JHEngine\\preprocess\jhengine_preprocess.hpp"
 #include <TlHelp32.h>
 #include <strsafe.h>
+#include <Psapi.h>
+
+#pragma comment(lib, "Psapi.lib")
 
 template <typename _T>
 struct ProcessListStructureDeleter
@@ -102,7 +105,26 @@ public:
 
 			(process_list_structure_.get())[process_list_count].pid = process_entry.th32ProcessID;
 			(process_list_structure_.get())[process_list_count].process_name = process_entry.szExeFile;
-			(process_list_structure_.get())[process_list_count].icon = ExtractIcon(AfxGetInstanceHandle(), process_entry.szExeFile, 0);
+
+			std::shared_ptr<void> process_handle_closer(
+				OpenProcess(PROCESS_ALL_ACCESS
+				, FALSE
+				, process_entry.th32ProcessID)
+				, ::CloseHandle);
+
+			if (process_handle_closer.get())
+			{
+				wchar_t path[MAX_PATH];
+				if (GetModuleFileNameExW(process_handle_closer.get(), 0, path, sizeof(path)))
+				{
+					(process_list_structure_.get())[process_list_count].icon = ExtractIcon(AfxGetInstanceHandle(), path, 0);
+				}
+				else
+					(process_list_structure_.get())[process_list_count].icon = NULL;
+			}
+			else
+				(process_list_structure_.get())[process_list_count].icon = NULL;
+
 			process_list_count++;
 		}
 		process_list_num_ = process_list_count;
@@ -128,6 +150,7 @@ public:
 		col.iSubItem = 0;
 		col.cx = 1000;
 		listbox_handle.InsertColumn(0, &col);
+		listbox_handle.SetExtendedStyle(LVS_EX_SUBITEMIMAGES);
 
 		for (int i = 0; i < process_num; i++)
 		{
@@ -138,8 +161,16 @@ public:
 				, process_list_structure[i].pid
 				, process_list_structure[i].process_name.c_str());
 
-			imglist.Add(process_list_structure[i].icon);
 			listbox_handle.InsertItem(i, process_list_name);
+
+			HICON basic_icon = AfxGetApp()->LoadIcon(IDI_ICON1);
+
+			if (process_list_structure[i].icon)
+				imglist.Add(process_list_structure[i].icon);
+			else
+				imglist.Add(basic_icon);
+
+			listbox_handle.SetItem(i, 0, LVIF_IMAGE, NULL, i, 0, 0, 0);
 		}
 		listbox_handle.SetImageList(&imglist, LVSIL_SMALL);
 
