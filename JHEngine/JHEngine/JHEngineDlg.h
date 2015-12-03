@@ -5,6 +5,7 @@
 #pragma once
 #include "afxext.h"
 #include "object_manager\object_manager.hpp"
+#include "afxwin.h"
 
 // CJHEngineDlg 대화 상자
 class CJHEngineDlg : public CDialogEx
@@ -35,4 +36,5 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	//CBitmapButton bitmapbtn1_;
+	CStatic process_text_;
 };

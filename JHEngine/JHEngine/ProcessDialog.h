@@ -28,4 +28,7 @@ public:
 	virtual BOOL OnInitDialog();
 	CListCtrl process_list_listctrl;
 	CImageList image_list_;
+//	afx_msg void OnLvnItemchangedList1(NMHDR *pNMHDR, LRESULT *pResult);
+//	afx_msg void OnClickList1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDblclkList1(NMHDR *pNMHDR, LRESULT *pResult);
 };

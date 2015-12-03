@@ -8,6 +8,8 @@
 #include "afxdialogex.h"
 #include "ProcessDialog.h"
 
+#include "utils\jhengine_utils.hpp"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -58,7 +60,8 @@ CJHEngineDlg::CJHEngineDlg(CWnd* pParent /*=NULL*/)
 void CJHEngineDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-//	DDX_Control(pDX, IDOK, bitmapbtn1_);
+	//	DDX_Control(pDX, IDOK, bitmapbtn1_);
+	DDX_Control(pDX, IDC_ProcessText, process_text_);
 }
 
 BEGIN_MESSAGE_MAP(CJHEngineDlg, CDialogEx)
@@ -160,9 +163,19 @@ HCURSOR CJHEngineDlg::OnQueryDragIcon()
 void CJHEngineDlg::OnBnClickedOk()
 {
 	CProcessDialog process_dialog(object_manager_.get());
-	if (process_dialog.DoModal() == IDOK)
+	process_dialog.DoModal();
+	if (!object_manager_->GetProcessManagerInstance()->IsOpened())
 	{
-		AfxMessageBox(L"123");
+		ProcessListStructure *pls = object_manager_->GetProcessManagerInstance()->GetProcessListStructure();
+		if (pls)
+			JHEngineUtils::ErrorMsg(L"%08X-%ls Open Fail", pls->pid, pls->process_name.c_str());
+	}
+	else
+	{
+		ProcessListStructure *pls = object_manager_->GetProcessManagerInstance()->GetProcessListStructure();
+		wchar_t proc_msg[MAX_PATH];
+		StringCbPrintfW(proc_msg, sizeof(proc_msg), L"%08X-%ls", pls->pid, pls->process_name.c_str());
+		process_text_.SetWindowTextW(proc_msg);
 	}
 }
 
