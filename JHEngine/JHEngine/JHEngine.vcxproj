@@ -111,9 +111,11 @@
     <ClInclude Include="preprocess\jhengine_preprocess.hpp" />
     <ClInclude Include="ProcessDialog.h" />
     <ClInclude Include="process\list\process_list.hpp" />
+    <ClInclude Include="process\manager\process_manager.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="utils\jhengine_utils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JHEngine.cpp" />

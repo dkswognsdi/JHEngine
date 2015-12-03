@@ -31,6 +31,12 @@
     <Filter Include="객체 관리">
       <UniqueIdentifier>{9b8a3bf4-d661-432b-ab42-2f274553d814}</UniqueIdentifier>
     </Filter>
+    <Filter Include="프로세스관련\관리">
+      <UniqueIdentifier>{1aa35894-dada-479c-a1d2-dfa4c316001b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="유틸">
+      <UniqueIdentifier>{9f937af3-bc33-4076-9a13-6b9332c3c8ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -65,6 +71,12 @@
     </ClInclude>
     <ClInclude Include="object_manager\object_manager.hpp">
       <Filter>객체 관리</Filter>
+    </ClInclude>
+    <ClInclude Include="process\manager\process_manager.hpp">
+      <Filter>프로세스관련\관리</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\jhengine_utils.hpp">
+      <Filter>유틸</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
