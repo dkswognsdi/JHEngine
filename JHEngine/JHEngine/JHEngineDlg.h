@@ -6,6 +6,8 @@
 #include "afxext.h"
 #include "object_manager\object_manager.hpp"
 #include "afxwin.h"
+#include "afxbutton.h"
+#include "afxcmn.h"
 
 // CJHEngineDlg 대화 상자
 class CJHEngineDlg : public CDialogEx
@@ -37,4 +39,10 @@ public:
 	afx_msg void OnBnClickedOk();
 	//CBitmapButton bitmapbtn1_;
 	CStatic process_text_;
+	CMFCButton open_process_btn_;
+	afx_msg void OnBnClickedOpenprocessbtn();
+	afx_msg void OnBnClickedCheck2();
+	afx_msg void OnBnClickedCheck8();
+	afx_msg void OnBnClickedButton1();
+	CListCtrl scan_result_list_;
 };

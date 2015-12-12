@@ -9,6 +9,7 @@
 #include "ProcessDialog.h"
 
 #include "utils\jhengine_utils.hpp"
+#include "thread_manager\thread_manager.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,13 +63,18 @@ void CJHEngineDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	//	DDX_Control(pDX, IDOK, bitmapbtn1_);
 	DDX_Control(pDX, IDC_ProcessText, process_text_);
+	DDX_Control(pDX, IDC_OPENPROCESSBTN, open_process_btn_);
+	DDX_Control(pDX, ScanResultListView, scan_result_list_);
 }
 
 BEGIN_MESSAGE_MAP(CJHEngineDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDOK, &CJHEngineDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_OPENPROCESSBTN, &CJHEngineDlg::OnBnClickedOpenprocessbtn)
+	ON_BN_CLICKED(IDC_CHECK2, &CJHEngineDlg::OnBnClickedCheck2)
+	ON_BN_CLICKED(IDC_CHECK8, &CJHEngineDlg::OnBnClickedCheck8)
+	ON_BN_CLICKED(IDC_BUTTON1, &CJHEngineDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -78,9 +84,6 @@ BOOL CJHEngineDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
-
-	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
@@ -98,17 +101,27 @@ BOOL CJHEngineDlg::OnInitDialog()
 		}
 	}
 
-	// 이 대화 상자의 아이콘을 설정합니다.  응용 프로그램의 주 창이 대화 상자가 아닐 경우에는
-	//  프레임워크가 이 작업을 자동으로 수행합니다.
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	open_process_btn_.SetImage(OpenProcessBitmap);
+	open_process_btn_.SetWindowTextW(L"");
 
-	//.LoadBitmaps(IDOK);
-	//bitmapbtn1_.SizeToContent();
+	LV_COLUMN col;
 
-	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
+	col.mask = LVCF_FMT | LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH;
+	col.fmt = LVCFMT_LEFT;
+
+	col.pszText = L"Address";
+	col.iSubItem = 0;
+	col.cx = 90;
+	scan_result_list_.InsertColumn(0, &col);
+	col.pszText = L"CurVal";
+	scan_result_list_.InsertColumn(1, &col);
+	col.pszText = L"CurVal2";
+	scan_result_list_.InsertColumn(2, &col);
+
+	return TRUE;
 }
 
 void CJHEngineDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -160,7 +173,7 @@ HCURSOR CJHEngineDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CJHEngineDlg::OnBnClickedOk()
+void CJHEngineDlg::OnBnClickedOpenprocessbtn()
 {
 	CProcessDialog process_dialog(object_manager_.get());
 	process_dialog.DoModal();
@@ -179,3 +192,72 @@ void CJHEngineDlg::OnBnClickedOk()
 	}
 }
 
+
+void CJHEngineDlg::OnBnClickedCheck2()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CJHEngineDlg::OnBnClickedCheck8()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CJHEngineDlg::OnBnClickedButton1()
+{
+	MemoryScanStructure mem_scan_structure;
+	ScanBufferMgr scan_buffer(new ScanBuffer[9]);
+
+	scan_buffer.get()[0].scan_check = TRUE;
+	scan_buffer.get()[0].scan_code = 0x12;
+	scan_buffer.get()[1].scan_check = TRUE;
+	scan_buffer.get()[1].scan_code = 0x34;
+	scan_buffer.get()[2].scan_check = FALSE;
+	scan_buffer.get()[3].scan_check = FALSE;
+	scan_buffer.get()[4].scan_check = FALSE;
+	scan_buffer.get()[5].scan_check = FALSE;
+	scan_buffer.get()[6].scan_check = FALSE;
+	scan_buffer.get()[7].scan_check = FALSE;
+	scan_buffer.get()[8].scan_check = TRUE;
+	scan_buffer.get()[8].scan_code = 00;
+
+
+	std::vector<DWORD> scan_result_vec;
+
+	mem_scan_structure.readonly_scan_check = TRUE;
+	mem_scan_structure.readonly_x_scan_check = TRUE;
+	mem_scan_structure.readwrite_scan_check = TRUE;
+	mem_scan_structure.readwrite_x_scan_check = TRUE;
+	mem_scan_structure.scan_end_address = 0x7FFE0000;
+	mem_scan_structure.scan_start_address = 0;
+	mem_scan_structure.writecopy_scan_check = TRUE;
+	mem_scan_structure.writecopy_x_scan_check = TRUE;
+
+	MemoryScanner *mem_scan_instance = object_manager_->GetMemoryScannerInstance();
+	std::function<BOOL(ProcessManager *, MemoryScanStructure &, ScanBufferPtr, unsigned long)> thread_proc
+		(
+		std::bind(&MemoryScanner::FirstScan, mem_scan_instance
+		, std::placeholders::_1
+		, std::placeholders::_2
+		, std::placeholders::_3
+		, std::placeholders::_4
+		)
+		);
+
+	ThreadManager<std::function<BOOL(ProcessManager *, MemoryScanStructure &, ScanBufferPtr, unsigned long)>
+		, ProcessManager *, MemoryScanStructure &, ScanBufferPtr, unsigned long>
+		thread_mgr(thread_proc,
+		object_manager_->GetProcessManagerInstance(),
+		mem_scan_structure,
+		scan_buffer.get(),
+		9);
+
+	for (DWORD i = 0; i < scan_result_vec.size(); i++)
+	{
+		wchar_t str_buffer[MAX_PATH]; 
+		StringCbPrintfW(str_buffer, sizeof(str_buffer), L"%08X", scan_result_vec[i]);
+		scan_result_list_.InsertItem(i, str_buffer);
+	}
+}

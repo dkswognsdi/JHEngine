@@ -15,6 +15,7 @@
 
 #include "JHEngine\process\list\process_list.hpp"
 #include "JHEngine\process\manager\process_manager.hpp"
+#include "JHEngine\scan\memory_scanner.hpp"
 
 class ObjectManager
 {
@@ -25,12 +26,14 @@ private:
 private:
 	std::shared_ptr<CProcessList> process_list_;
 	std::shared_ptr<ProcessManager> process_manager_;
+	std::shared_ptr<MemoryScanner> memory_scanner_;
 
 public:
 	ObjectManager()
 	{
 		process_list_ = std::make_shared<CProcessList>();
 		process_manager_ = std::make_shared<ProcessManager>();
+		memory_scanner_ = std::make_shared<MemoryScanner>();
 	}
 
 	virtual ~ObjectManager(void)
@@ -39,6 +42,7 @@ public:
 
 	CProcessList *GetProcessListInstance() const { return process_list_.get(); }
 	ProcessManager *GetProcessManagerInstance() const { return process_manager_.get(); }
+	MemoryScanner *GetMemoryScannerInstance() const { return memory_scanner_.get(); }
 };
 
 #endif

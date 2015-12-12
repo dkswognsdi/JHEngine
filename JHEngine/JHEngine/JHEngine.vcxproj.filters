@@ -37,6 +37,9 @@
     <Filter Include="유틸">
       <UniqueIdentifier>{9f937af3-bc33-4076-9a13-6b9332c3c8ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="스캔">
+      <UniqueIdentifier>{1e600cef-c060-45db-8387-5f429fd752d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -78,6 +81,12 @@
     <ClInclude Include="utils\jhengine_utils.hpp">
       <Filter>유틸</Filter>
     </ClInclude>
+    <ClInclude Include="scan\memory_scanner.hpp">
+      <Filter>스캔</Filter>
+    </ClInclude>
+    <ClInclude Include="thread_manager\thread_manager.hpp">
+      <Filter>객체 관리</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JHEngine.cpp">
@@ -103,6 +112,9 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="..\imageres_15.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="resource\bmp\openprocess.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

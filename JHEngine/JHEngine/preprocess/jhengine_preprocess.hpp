@@ -17,9 +17,14 @@ jhengine_preprocess.hpp
 #include <stdio.h>
 
 //boost
+#include "boost\scoped_array.hpp"
+#include "boost\format.hpp"
+
 #include <memory>
+#include <thread>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 #include "JHEngine\error\jhengine_errorcode.h"
 
@@ -37,6 +42,26 @@ typedef struct _ProcessListStructureW
 	HICON icon;
 }ProcessListStructureW, *ProcessListStructureWPtr;
 
+typedef struct _MemoryScanStructure
+{
+	DWORD scan_start_address;
+	DWORD scan_end_address;
+	BOOL readonly_scan_check;
+	BOOL readwrite_scan_check;
+	BOOL writecopy_scan_check;
+	BOOL readonly_x_scan_check;
+	BOOL readwrite_x_scan_check;
+	BOOL writecopy_x_scan_check;
+}MemoryScanStructure, *MemoryScanStructurePtr;
+
+typedef struct _ScanBuffer
+{
+	BYTE scan_code;
+	BOOL scan_check;
+}ScanBuffer, *ScanBufferPtr;
+
+typedef boost::scoped_array<ScanBuffer> ScanBufferMgr;
+
 #ifdef _UNICODE
 #define ProcessListStructure ProcessListStructureW
 #else
@@ -45,5 +70,8 @@ typedef struct _ProcessListStructureW
 
 #define NULL_CHECK_MACRO(var) \
 if (var == nullptr || var == NULL)
+
+
+#define AddPtr(x, y) (PVOID)((DWORD_PTR)(x) + (DWORD_PTR)(y))
 
 #endif

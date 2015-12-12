@@ -31,11 +31,6 @@ private:
 		process_handle_closer_.reset(process_handle, ::CloseHandle);
 	}
 
-	HANDLE Get() const
-	{
-		process_handle_closer_.get();
-	}
-
 public:
 	ProcessManager()
 		:pls_(nullptr)
@@ -43,6 +38,11 @@ public:
 	}
 	virtual ~ProcessManager(void)
 	{
+	}
+
+	HANDLE Get() const
+	{
+		return process_handle_closer_.get();
 	}
 
 	BOOL __stdcall Open(ProcessListStructure *pls)

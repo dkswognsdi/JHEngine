@@ -113,8 +113,10 @@
     <ClInclude Include="process\list\process_list.hpp" />
     <ClInclude Include="process\manager\process_manager.hpp" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="scan\memory_scanner.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="thread_manager\thread_manager.hpp" />
     <ClInclude Include="utils\jhengine_utils.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\imageres_15.ico" />
+    <Image Include="resource\bmp\openprocess.bmp" />
     <Image Include="res\JHEngine.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
