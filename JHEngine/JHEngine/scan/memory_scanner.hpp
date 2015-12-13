@@ -80,7 +80,7 @@ public:
 		const PVOID SCAN_MAXIMUM_PTR = (PVOID)(0x7FFE0000);
 		PVOID start = reinterpret_cast<PVOID>(memory_scan_structure.scan_start_address);
 		PVOID end = reinterpret_cast<PVOID>(memory_scan_structure.scan_end_address);
-		DWORD protect = 0;
+		DWORD protect = 0, scan_count = 0;
 
 		if (end > SCAN_MAXIMUM_PTR)
 			end = SCAN_MAXIMUM_PTR;

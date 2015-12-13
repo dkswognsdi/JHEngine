@@ -9,7 +9,7 @@
 #include "ProcessDialog.h"
 
 #include "utils\jhengine_utils.hpp"
-#include "thread_manager\thread_manager.hpp"
+#include "JHEngine\thread_manager\worker_manager.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -120,6 +120,12 @@ BOOL CJHEngineDlg::OnInitDialog()
 	scan_result_list_.InsertColumn(1, &col);
 	col.pszText = L"CurVal2";
 	scan_result_list_.InsertColumn(2, &col);
+
+	{
+		MessageBoxW(L"1");
+		WorkerManager worker_mgr;
+		MessageBoxW(L"2");
+	}
 
 	return TRUE;
 }
@@ -234,30 +240,4 @@ void CJHEngineDlg::OnBnClickedButton1()
 	mem_scan_structure.scan_start_address = 0;
 	mem_scan_structure.writecopy_scan_check = TRUE;
 	mem_scan_structure.writecopy_x_scan_check = TRUE;
-
-	MemoryScanner *mem_scan_instance = object_manager_->GetMemoryScannerInstance();
-	std::function<BOOL(ProcessManager *, MemoryScanStructure &, ScanBufferPtr, unsigned long)> thread_proc
-		(
-		std::bind(&MemoryScanner::FirstScan, mem_scan_instance
-		, std::placeholders::_1
-		, std::placeholders::_2
-		, std::placeholders::_3
-		, std::placeholders::_4
-		)
-		);
-
-	ThreadManager<std::function<BOOL(ProcessManager *, MemoryScanStructure &, ScanBufferPtr, unsigned long)>
-		, ProcessManager *, MemoryScanStructure &, ScanBufferPtr, unsigned long>
-		thread_mgr(thread_proc,
-		object_manager_->GetProcessManagerInstance(),
-		mem_scan_structure,
-		scan_buffer.get(),
-		9);
-
-	for (DWORD i = 0; i < scan_result_vec.size(); i++)
-	{
-		wchar_t str_buffer[MAX_PATH]; 
-		StringCbPrintfW(str_buffer, sizeof(str_buffer), L"%08X", scan_result_vec[i]);
-		scan_result_list_.InsertItem(i, str_buffer);
-	}
 }

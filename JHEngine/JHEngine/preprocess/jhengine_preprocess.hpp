@@ -62,6 +62,12 @@ typedef struct _ScanBuffer
 
 typedef boost::scoped_array<ScanBuffer> ScanBufferMgr;
 
+typedef struct _WorkerData
+{
+	DWORD worker_id;
+	PVOID worker_object;
+}WorkerData, *WorkerDataPtr;
+
 #ifdef _UNICODE
 #define ProcessListStructure ProcessListStructureW
 #else

@@ -116,7 +116,7 @@
     <ClInclude Include="scan\memory_scanner.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="thread_manager\thread_manager.hpp" />
+    <ClInclude Include="thread_manager\worker_manager.hpp" />
     <ClInclude Include="utils\jhengine_utils.hpp" />
   </ItemGroup>
   <ItemGroup>

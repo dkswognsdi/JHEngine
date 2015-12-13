@@ -84,7 +84,7 @@
     <ClInclude Include="scan\memory_scanner.hpp">
       <Filter>스캔</Filter>
     </ClInclude>
-    <ClInclude Include="thread_manager\thread_manager.hpp">
+    <ClInclude Include="thread_manager\worker_manager.hpp">
       <Filter>객체 관리</Filter>
     </ClInclude>
   </ItemGroup>
