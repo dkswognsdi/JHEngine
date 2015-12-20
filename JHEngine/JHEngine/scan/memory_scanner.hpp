@@ -18,9 +18,14 @@
 
 class MemoryScanner
 {
+public:
+	typedef std::vector<DWORD> ScanResultVec;
+
 private:
 	MemoryScanner(const MemoryScanner&);
 	MemoryScanner &operator=(const MemoryScanner&);
+
+	ScanResultVec scan_result_;
 
 private:
 	BOOL IsScanMemory(DWORD protect)
@@ -59,6 +64,22 @@ private:
 			protect |= PAGE_EXECUTE_WRITECOPY;
 	}
 
+	/*VOID ScanResultClear(CListCtrl &list_ctrl)
+	{
+		scan_result_.clear();
+		list_ctrl.SetItemCountEx(0, LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
+	}*/
+
+	BOOL IsScanResultEmpty() const
+	{
+		return scan_result_.empty();
+	}
+
+	int GetScanResultSize() const
+	{
+		return scan_result_.size();
+	}
+
 public:
 	MemoryScanner()
 	{
@@ -68,9 +89,21 @@ public:
 	{
 	}
 
-public:
-	BOOL __stdcall FirstScan(ProcessManager *process_manager, MemoryScanStructure &memory_scan_structure, ScanBufferPtr scan_buffer, unsigned long scan_size)
+	ScanResultVec &GetScanResult()
 	{
+		return scan_result_;
+	}
+
+	VOID ScanResultClear(CListCtrl &list_ctrl)
+	{
+		scan_result_.clear();
+		list_ctrl.SetItemCountEx(0, LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
+	}
+
+public:
+	BOOL __stdcall FirstScan(ProcessManager *process_manager, MemoryScanStructure &memory_scan_structure, ScanBufferPtr scan_buffer, unsigned long scan_size, CListCtrl &list_ctrl)
+	{
+		ScanResultClear(list_ctrl);
 		if (memory_scan_structure.scan_end_address < memory_scan_structure.scan_start_address)
 			return FALSE;
 
@@ -107,7 +140,7 @@ public:
 				DWORD req_size = 0;
 				DWORD blk_size = mbi.RegionSize;
 				boost::scoped_array<BYTE> buffer(new BYTE[mbi.RegionSize]);
-				ReadProcessMemory(process_manager->Get(), mbi.BaseAddress, buffer.get(), blk_size, &req_size);
+				process_manager->ReadArray(mbi.BaseAddress, buffer.get(), blk_size, &req_size);
 				PBYTE cmpbuffer = buffer.get();
 
 				for (DWORD i = 0; i < blk_size; i++)
@@ -119,12 +152,17 @@ public:
 
 						if (j == scan_size - 1)
 						{
+							scan_result_.push_back((DWORD)(mbi.BaseAddress) + i);
 						}
 					}
 				}
 			}
 			start = AddPtr(start, mbi.RegionSize);
 		}
+		if (!IsScanResultEmpty())
+			list_ctrl.SetItemCountEx(GetScanResultSize(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
+
+		MessageBoxW(0, std::to_wstring(GetScanResultSize()).c_str(), L"", 64);
 		return TRUE;
 	}
 

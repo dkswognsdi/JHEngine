@@ -45,4 +45,6 @@ public:
 	afx_msg void OnBnClickedCheck8();
 	afx_msg void OnBnClickedButton1();
 	CListCtrl scan_result_list_;
+	afx_msg void GetDistInfo(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedButton2();
 };

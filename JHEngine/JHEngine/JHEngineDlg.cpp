@@ -75,6 +75,8 @@ BEGIN_MESSAGE_MAP(CJHEngineDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK2, &CJHEngineDlg::OnBnClickedCheck2)
 	ON_BN_CLICKED(IDC_CHECK8, &CJHEngineDlg::OnBnClickedCheck8)
 	ON_BN_CLICKED(IDC_BUTTON1, &CJHEngineDlg::OnBnClickedButton1)
+	ON_NOTIFY(LVN_GETDISPINFO, ScanResultListView, &CJHEngineDlg::GetDistInfo)
+	ON_BN_CLICKED(IDC_BUTTON2, &CJHEngineDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -120,13 +122,6 @@ BOOL CJHEngineDlg::OnInitDialog()
 	scan_result_list_.InsertColumn(1, &col);
 	col.pszText = L"CurVal2";
 	scan_result_list_.InsertColumn(2, &col);
-
-	{
-		MessageBoxW(L"1");
-		WorkerManager worker_mgr;
-		MessageBoxW(L"2");
-	}
-
 	return TRUE;
 }
 
@@ -210,7 +205,6 @@ void CJHEngineDlg::OnBnClickedCheck8()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
 
-
 void CJHEngineDlg::OnBnClickedButton1()
 {
 	MemoryScanStructure mem_scan_structure;
@@ -240,4 +234,50 @@ void CJHEngineDlg::OnBnClickedButton1()
 	mem_scan_structure.scan_start_address = 0;
 	mem_scan_structure.writecopy_scan_check = TRUE;
 	mem_scan_structure.writecopy_x_scan_check = TRUE;
+
+	object_manager_->GetMemoryScannerInstance()->FirstScan(object_manager_->GetProcessManagerInstance()
+		, mem_scan_structure
+		, scan_buffer.get()
+		, 9
+		, scan_result_list_);
+}
+
+
+void CJHEngineDlg::GetDistInfo(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+	LV_ITEM* pItem = &(pDispInfo)->item;
+
+	int nItem = pItem->iItem;
+
+	*pResult = 0;
+	MemoryScanner::ScanResultVec scv = object_manager_->GetMemoryScannerInstance()->GetScanResult();
+
+
+	if (pItem->mask & LVIF_TEXT)
+	{
+		switch (pItem->iSubItem)
+		{
+		case 0:
+		{
+				  boost::wformat addr_format(L"%08X");
+				  addr_format % scv[nItem];
+				  lstrcpyn(pItem->pszText, addr_format.str().c_str(), pItem->cchTextMax);
+				  break;
+		}
+		case 1:
+		{
+			boost::wformat addr_format(L"%08d");
+			addr_format % nItem;
+			lstrcpyn(pItem->pszText, addr_format.str().c_str(), pItem->cchTextMax);
+			break;
+		}
+		}
+	}
+}
+
+
+void CJHEngineDlg::OnBnClickedButton2()
+{
+	object_manager_->GetMemoryScannerInstance()->ScanResultClear(scan_result_list_);
 }
