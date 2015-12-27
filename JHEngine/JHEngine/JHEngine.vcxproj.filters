@@ -87,6 +87,9 @@
     <ClInclude Include="thread_manager\worker_manager.hpp">
       <Filter>객체 관리</Filter>
     </ClInclude>
+    <ClInclude Include="scan\scan_converter.hpp">
+      <Filter>스캔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JHEngine.cpp">

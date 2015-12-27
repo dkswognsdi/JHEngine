@@ -114,6 +114,7 @@
     <ClInclude Include="process\manager\process_manager.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="scan\memory_scanner.hpp" />
+    <ClInclude Include="scan\scan_converter.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="thread_manager\worker_manager.hpp" />

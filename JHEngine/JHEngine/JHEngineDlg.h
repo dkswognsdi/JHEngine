@@ -47,4 +47,6 @@ public:
 	CListCtrl scan_result_list_;
 	afx_msg void GetDistInfo(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedButton2();
+	CStatic scan_result_count_label_;
+	CEdit scan_find_edit_;
 };

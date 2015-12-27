@@ -13,7 +13,7 @@
 #ifndef _JHENGINE_UTILS_HPP
 #define _JHENGINE_UTILS_HPP
 
-#include "JHEngine\preprocess\jhengine_preprocess.hpp"
+#include "JHEngine\preprocess\jhengine_preprocess.hpp" 
 
 namespace JHEngineUtils
 {
@@ -26,6 +26,21 @@ namespace JHEngineUtils
 		vswprintf_s(msg, fmt, ap);
 		MessageBoxW(0, msg, L"Err", 64);
 		va_end(ap);
+	}
+
+	template<typename T>
+	static void StrToNum(std::string &str, T& val)
+	{
+		std::stringstream sstream(str);
+		sstream >> std::hex >> val;
+		MessageBoxW(0, std::to_wstring(val).c_str(), L"", 64);
+	}
+
+	template<typename T>
+	static void WStrToNum(std::wstring &wstr, T& val)
+	{
+		std::wstringstream wsstream(wstr);
+		wsstream >> std::hex >> val;
 	}
 }
 

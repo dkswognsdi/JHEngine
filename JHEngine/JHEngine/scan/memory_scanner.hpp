@@ -101,7 +101,7 @@ public:
 	}
 
 public:
-	BOOL __stdcall FirstScan(ProcessManager *process_manager, MemoryScanStructure &memory_scan_structure, ScanBufferPtr scan_buffer, unsigned long scan_size, CListCtrl &list_ctrl)
+	BOOL __stdcall FirstScan(ProcessManager *process_manager, MemoryScanStructure &memory_scan_structure, ScanBufferPtr scan_buffer, unsigned long scan_size, CListCtrl &list_ctrl, CStatic &count_label)
 	{
 		ScanResultClear(list_ctrl);
 		if (memory_scan_structure.scan_end_address < memory_scan_structure.scan_start_address)
@@ -110,10 +110,13 @@ public:
 		if (!process_manager || !scan_buffer || !scan_size)
 			return FALSE;
 
-		const PVOID SCAN_MAXIMUM_PTR = (PVOID)(0x7FFE0000);
+		static const DWORD type = MEM_PRIVATE | MEM_IMAGE | MEM_MAPPED;
+		static const PVOID SCAN_MAXIMUM_PTR = (PVOID)(0x7FFE0000);
 		PVOID start = reinterpret_cast<PVOID>(memory_scan_structure.scan_start_address);
 		PVOID end = reinterpret_cast<PVOID>(memory_scan_structure.scan_end_address);
 		DWORD protect = 0, scan_count = 0;
+
+		GetProtect(memory_scan_structure, protect);
 
 		if (end > SCAN_MAXIMUM_PTR)
 			end = SCAN_MAXIMUM_PTR;
@@ -129,11 +132,6 @@ public:
 				start = AddPtr(start, mbi.RegionSize);
 				continue;
 			}
-
-			GetProtect(memory_scan_structure, protect);
-
-			DWORD type = MEM_PRIVATE | MEM_IMAGE | MEM_MAPPED;
-
 
 			if ((mbi.State & MEM_COMMIT) && (mbi.Type & type) && (mbi.Protect & protect))
 			{
@@ -162,7 +160,10 @@ public:
 		if (!IsScanResultEmpty())
 			list_ctrl.SetItemCountEx(GetScanResultSize(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
 
-		MessageBoxW(0, std::to_wstring(GetScanResultSize()).c_str(), L"", 64);
+		boost::wformat found_str_format(L"Found: %d");
+		found_str_format % GetScanResultSize();
+
+		count_label.SetWindowTextW(found_str_format.str().c_str());
 		return TRUE;
 	}
 

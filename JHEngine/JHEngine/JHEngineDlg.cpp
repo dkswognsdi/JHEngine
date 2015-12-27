@@ -65,6 +65,8 @@ void CJHEngineDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ProcessText, process_text_);
 	DDX_Control(pDX, IDC_OPENPROCESSBTN, open_process_btn_);
 	DDX_Control(pDX, ScanResultListView, scan_result_list_);
+	DDX_Control(pDX, ScanResultCountLabel, scan_result_count_label_);
+	DDX_Control(pDX, IDC_EDIT1, scan_find_edit_);
 }
 
 BEGIN_MESSAGE_MAP(CJHEngineDlg, CDialogEx)
@@ -208,23 +210,8 @@ void CJHEngineDlg::OnBnClickedCheck8()
 void CJHEngineDlg::OnBnClickedButton1()
 {
 	MemoryScanStructure mem_scan_structure;
-	ScanBufferMgr scan_buffer(new ScanBuffer[9]);
-
-	scan_buffer.get()[0].scan_check = TRUE;
-	scan_buffer.get()[0].scan_code = 0x12;
-	scan_buffer.get()[1].scan_check = TRUE;
-	scan_buffer.get()[1].scan_code = 0x34;
-	scan_buffer.get()[2].scan_check = FALSE;
-	scan_buffer.get()[3].scan_check = FALSE;
-	scan_buffer.get()[4].scan_check = FALSE;
-	scan_buffer.get()[5].scan_check = FALSE;
-	scan_buffer.get()[6].scan_check = FALSE;
-	scan_buffer.get()[7].scan_check = FALSE;
-	scan_buffer.get()[8].scan_check = TRUE;
-	scan_buffer.get()[8].scan_code = 00;
-
-
-	std::vector<DWORD> scan_result_vec;
+	int size = 0;
+	ScanBufferMgr scan_buffer(new ScanBuffer[size]);
 
 	mem_scan_structure.readonly_scan_check = TRUE;
 	mem_scan_structure.readonly_x_scan_check = TRUE;
@@ -238,8 +225,9 @@ void CJHEngineDlg::OnBnClickedButton1()
 	object_manager_->GetMemoryScannerInstance()->FirstScan(object_manager_->GetProcessManagerInstance()
 		, mem_scan_structure
 		, scan_buffer.get()
-		, 9
-		, scan_result_list_);
+		, size
+		, scan_result_list_
+		, scan_result_count_label_);
 }
 
 
